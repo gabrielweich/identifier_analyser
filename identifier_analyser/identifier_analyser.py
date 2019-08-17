@@ -1,55 +1,64 @@
-
 import re
-import sys
 from pathlib import Path
 from collections import defaultdict
 
-regex = re.compile('[^A-Za-z0-9_]')
+regex = re.compile("[^A-Za-z0-9_]")
 
-def formatExit(ocurrences, filename):
-    with open(f"{filename}-xref.txt", 'w') as f:
+
+def format_exit(ocurrences, filename):
+    with open(f"{filename}-xref.txt", "w") as f:
         for k, v in ocurrences.items():
-            f.write(k + ';' + ','.join(v) + '\n')
+            f.write(k + ";" + ",".join(v) + "\n")
 
 
 def clean_word(word):
-    return regex.sub('\t', word).strip()
+    return regex.sub("\t", word).strip()
+
 
 def split_word(word):
-    return word.split('\t')
+    return word.split("\t")
+
 
 def flatmap(words):
-    return [word for l in words for word in l]
+    return [word for sublist in words for word in sublist]
+
 
 def remove_spaces(words):
     return filter(lambda x: x, words)
 
 
-def read_file(name):
-    path = Path(name + '.txt')
+def file_is_valid(path):
+    return path.is_file()
 
-    if path.is_file():
-        with path.open() as f:
-            return f.readlines()
-    else:
-        print("ERRO: arquivo de entrada inexistente.")
-        exit(1)
+
+def input_file():
+    name = input("Por favor, digite o nome do arquivo-texto de entrada: ")
+    path = Path(name + ".txt")
+    return name, path
+
+
+def read_file(path):
+    with path.open() as f:
+        return f.readlines()
+
 
 def ocurrences(lines):
     ocurrences = defaultdict(list)
     for i, l in enumerate(lines):
-        words =  map(split_word, map(clean_word, l.split(' ')))
-        flat_words = remove_spaces(flatmap(words)) 
-        
+        words = map(split_word, map(clean_word, l.split(" ")))
+        flat_words = remove_spaces(flatmap(words))
         for w in flat_words:
             ocurrences[w].append(str(i + 1))
-    
     return ocurrences
 
-def main():
-    name = input('Por favor, digite o nome do arquivo-texto de entrada: ')
-    lines = read_file(name)
 
-    result = ocurrences(lines)
-    formatExit(result, name)
-    return 0
+def main():
+    name, path = input_file()
+    if file_is_valid(path):
+        lines = read_file(path)
+        result = ocurrences(lines)
+        format_exit(result, name)
+        return 0
+    else:
+        print("ERRO: arquivo de entrada inexistente.")
+        return 1
