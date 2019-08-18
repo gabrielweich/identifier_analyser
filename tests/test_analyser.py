@@ -1,4 +1,8 @@
-from identifier_analyser.identifier_analyser import ocurrences, flatmap
+from identifier_analyser.identifier_analyser import (
+    ocurrences,
+    clean_special_characters,
+    remove_spaces,
+)
 
 
 def test_ocurrences():
@@ -24,6 +28,11 @@ def test_dots():
     assert result["tes"] == ["2"]
 
 
-def test_flatmap():
-    array = [[1, 2], [3, 4]]
-    assert flatmap(array) == [1, 2, 3, 4]
+def test_clean():
+    line = "#gesiel.%man uel"
+    assert clean_special_characters(line) == " gesiel  man uel"
+
+
+def test_remove_spaces():
+    array = ["teste", " ", "", "  "]
+    assert list(remove_spaces(array)) == ["teste"]

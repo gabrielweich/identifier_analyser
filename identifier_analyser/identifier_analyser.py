@@ -11,20 +11,16 @@ def format_exit(ocurrences, filename):
             f.write(k + ";" + ",".join(v) + "\n")
 
 
-def clean_word(word):
-    return regex.sub("\t", word).strip()
+def clean_special_characters(line):
+    return regex.sub(" ", line)
 
 
-def split_word(word):
-    return word.split("\t")
-
-
-def flatmap(words):
-    return [word for sublist in words for word in sublist]
+def split_line(line):
+    return line.split(" ")
 
 
 def remove_spaces(words):
-    return filter(lambda x: x, words)
+    return filter(lambda x: x.split(), words)
 
 
 def file_is_valid(path):
@@ -44,11 +40,10 @@ def read_file(path):
 
 def ocurrences(lines):
     ocurrences = defaultdict(list)
-    for i, l in enumerate(lines):
-        words = map(split_word, map(clean_word, l.split(" ")))
-        flat_words = remove_spaces(flatmap(words))
-        for w in flat_words:
-            ocurrences[w].append(str(i + 1))
+    for i, line in enumerate(lines):
+        words = remove_spaces(split_line(clean_special_characters(line)))
+        for word in words:
+            ocurrences[word].append(str(i + 1))
     return ocurrences
 
 
