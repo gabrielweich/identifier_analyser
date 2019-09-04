@@ -5,5 +5,5 @@ then
 	echo "Python3.7 não encontrado no PATH."
 else
     cd $(dirname $0)
-    python3.7 -m identifier_analyser
+    python3.7 -m identifier_analyser "$@"
 fi

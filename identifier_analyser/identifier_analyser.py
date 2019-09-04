@@ -1,43 +1,31 @@
+"""
+    This file contains the methods related to the logic
+    of the algorithm execution.
+"""
+
 import re
-from pathlib import Path
 from collections import defaultdict
+from .io_manager import format_exit, read_file, input_file
 
 regex = re.compile("[^A-Za-z0-9_]")
 
 
-def format_exit(ocurrences, filename):
-    with open(f"{filename}-xref.txt", "w") as f:
-        for k, v in ocurrences.items():
-            f.write(k + ";" + ",".join(v) + "\n")
-
-
+# Remove special characters from the line
 def clean_special_characters(line):
     return regex.sub(" ", line)
 
 
+# Split the words in the line
 def split_line(line):
     return line.split(" ")
 
 
+# Clean empty elements from array
 def remove_spaces(words):
-    return filter(lambda x: x.split(), words)
+    return filter(lambda x: x.strip(), words)
 
 
-def file_is_valid(path):
-    return path.is_file()
-
-
-def input_file():
-    name = input("Por favor, digite o nome do arquivo-texto de entrada: ")
-    path = Path(name + ".txt")
-    return name, path
-
-
-def read_file(path):
-    with path.open() as f:
-        return f.readlines()
-
-
+# Count identifiers in the line
 def ocurrences(lines):
     ocurrences = defaultdict(list)
     for i, line in enumerate(lines):
@@ -47,13 +35,14 @@ def ocurrences(lines):
     return ocurrences
 
 
+# Executes main flow
 def main():
-    name, path = input_file()
-    if file_is_valid(path):
-        lines = read_file(path)
+    try:
+        filepath = input_file()
+        lines = read_file(filepath)
         result = ocurrences(lines)
-        format_exit(result, name)
+        format_exit(result, filepath)
         return 0
-    else:
-        print("ERRO: arquivo de entrada inexistente.")
+    except Exception as e:
+        print(f"ERRO: {e}")
         return 1
